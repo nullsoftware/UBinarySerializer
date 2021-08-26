@@ -13,6 +13,13 @@ namespace NullSoftware.Serialization
     public abstract class BinarySerializer
     {
         internal abstract ushort LatestGeneration { get; } // latest generation of target type
+
+        /// <summary>
+        /// Gets converters collection that used in current serializer.
+        /// </summary>
+        /// <remarks>
+        /// Each converter is bonded to object type.
+        /// </remarks>
         protected IDictionary<Type, IBinaryConverter> Converters { get; }
 
         protected BinarySerializer(IDictionary<Type, IBinaryConverter> converters)
@@ -51,8 +58,15 @@ namespace NullSoftware.Serialization
         internal abstract object ContinueDeserialization(BinaryReader stream, bool allowNullValue, ushort generation); // safe deserialization
     }
 
+    /// <summary>
+    /// Serializes and deserializes an specified object in binary format.
+    /// </summary>
+    /// <typeparam name="T">Type of object to serialize/deserialize.</typeparam>
     public class BinarySerializer<T> : BinarySerializer where T : new()
     {
+        /// <summary>
+        /// Gets default encoding for current instance of serializer.
+        /// </summary>
         public Encoding DefaultEncoding { get; set; } = Encoding.UTF8;
 
         private readonly Dictionary<MemberInfoProxy, BinIndexAttribute> _bindings;
@@ -395,11 +409,21 @@ namespace NullSoftware.Serialization
         }
 
 
+        /// <summary>
+        /// Determinants whether specified type is derived from list type.
+        /// </summary>
+        /// <param name="type">Type to check for list.</param>
+        /// <returns>true is current type is derived from list type, otherwise false.</returns>
         protected virtual bool IsListType(Type type)
         {
             return type.IsGenericType && type.GetInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IList<>));
         }
 
+        /// <summary>
+        /// Gets list element type from specified type.
+        /// </summary>
+        /// <param name="listType">Type that derived from <see cref="IList{T}"/>.</param>
+        /// <returns>Element type of <see cref="IList{T}"/>.</returns>
         protected virtual Type GetListItemType(Type listType)
         {
             Type result = listType.GetInterfaces().FirstOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(ICollection<>));
@@ -436,7 +460,7 @@ namespace NullSoftware.Serialization
                 parameter));
         }
 
-
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"{nameof(BinarySerializer)} for {typeof(T)}";

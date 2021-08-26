@@ -16,22 +16,22 @@ namespace NullSoftware.Serialization
         private Action<object, object> _setMethod;
 
         /// <summary>
-        /// Wrapped member.
+        /// Gets wrapped member.
         /// </summary>
         public MemberInfo MemberInfo { get; }
 
         /// <summary>
-        /// Original type of field or property.
+        /// Gets original type of field or property.
         /// </summary>
         public Type MemberTargetType { get; }
 
         /// <summary>
-        /// Safe type of field or property, that can be used by serializer.
+        /// Gets safe type of field or property, that can be used by serializer.
         /// </summary>
         public Type SafeMemberTargetType { get; }
 
         /// <summary>
-        /// Is current member readonly.
+        /// Gets a value indicating whether the current member is readonly.
         /// </summary>
         public bool IsReadOnly { get; }
 
