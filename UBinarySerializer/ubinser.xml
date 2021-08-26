@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ubinser</name>
+    </assembly>
+    <members>
+        <member name="T:NullSoftware.Serialization.IBinaryConverter">
+            <summary>
+            Represents a methods which needed for binary serialization or deserialization.
+            </summary>
+        </member>
+        <member name="M:NullSoftware.Serialization.IBinaryConverter.ToBytes(System.Reflection.MemberInfo,System.IO.BinaryWriter,System.Object,System.Object)">
+            <summary>
+            Converts value to bytes using <see cref="T:System.IO.BinaryWriter"/>.
+            </summary>
+            <param name="member">Field or property member info.</param>
+            <param name="stream">Instance of <see cref="T:System.IO.BinaryWriter"/> that will be used to write bytes.</param>
+            <param name="value">Value to convert into bytes.</param>
+            <param name="parameter">Additional parameter.</param>
+        </member>
+        <member name="M:NullSoftware.Serialization.IBinaryConverter.ToValue(System.Reflection.MemberInfo,System.IO.BinaryReader,System.Object)">
+            <summary>
+            Converts bytes to value using <see cref="T:System.IO.BinaryReader"/>.
+            </summary>
+            <param name="member">Field or property member info.</param>
+            <param name="stream">Instance of <see cref="T:System.IO.BinaryReader"/> that will be used to read bytes.</param>
+            <param name="parameter">Additional parameter.</param>
+            <returns>The value converted from bytes.</returns>
+        </member>
+        <member name="T:NullSoftware.Serialization.MemberInfoProxy">
+            <summary>
+            Wrapper for <see cref="T:System.Reflection.MemberInfo"/> 
+            to provide easy access to get or set methods. 
+            </summary>
+            <remarks>
+            This class is created to work with <see cref="T:System.Reflection.FieldInfo"/> or <see cref="T:System.Reflection.PropertyInfo"/>.
+            </remarks>
+        </member>
+        <member name="P:NullSoftware.Serialization.MemberInfoProxy.MemberInfo">
+            <summary>
+            Wrapped member.
+            </summary>
+        </member>
+        <member name="P:NullSoftware.Serialization.MemberInfoProxy.MemberTargetType">
+            <summary>
+            Original type of field or property.
+            </summary>
+        </member>
+        <member name="P:NullSoftware.Serialization.MemberInfoProxy.SafeMemberTargetType">
+            <summary>
+            Safe type of field or property, that can be used by serializer.
+            </summary>
+        </member>
+        <member name="P:NullSoftware.Serialization.MemberInfoProxy.IsReadOnly">
+            <summary>
+            Is current member readonly.
+            </summary>
+        </member>
+        <member name="P:NullSoftware.Serialization.MemberInfoProxy.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:NullSoftware.Serialization.MemberInfoProxy.DeclaringType">
+            <inheritdoc/>
+        </member>
+        <member name="P:NullSoftware.Serialization.MemberInfoProxy.MemberType">
+            <inheritdoc/>
+        </member>
+        <member name="P:NullSoftware.Serialization.MemberInfoProxy.ReflectedType">
+            <inheritdoc/>
+        </member>
+        <member name="M:NullSoftware.Serialization.MemberInfoProxy.#ctor(System.Reflection.FieldInfo)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NullSoftware.Serialization.MemberInfoProxy"/> 
+            based on <see cref="T:System.Reflection.FieldInfo"/>.
+            </summary>
+            <param name="field">Field Info.</param>
+        </member>
+        <member name="M:NullSoftware.Serialization.MemberInfoProxy.#ctor(System.Reflection.PropertyInfo)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NullSoftware.Serialization.MemberInfoProxy"/>
+            based on <see cref="T:System.Reflection.PropertyInfo"/>.
+            </summary>
+            <param name="prop">Property Info.</param>
+        </member>
+        <member name="M:NullSoftware.Serialization.MemberInfoProxy.GetValue(System.Object)">
+            <summary>
+            Returns a field of property value of a specified object.
+            </summary>
+            <param name="obj">The object whose field/property value will be returned.</param>
+            <returns>The field of property value of a specified object.</returns>
+        </member>
+        <member name="M:NullSoftware.Serialization.MemberInfoProxy.SetValue(System.Object,System.Object)">
+            <summary>
+            Sets the field or property value of a specified object.
+            </summary>
+            <param name="obj">The object whose field/property value will be set.</param>
+            <param name="value">The new field or property value.</param>
+        </member>
+        <member name="M:NullSoftware.Serialization.MemberInfoProxy.GetSafeType(System.Type)">
+            <summary>
+            Gets safe type for serializer. 
+            For enum type this method returns its underlying type.
+            </summary>
+            <param name="memberType">Type of member.</param>
+            <returns>The serializer safe type.</returns>
+        </member>
+        <member name="M:NullSoftware.Serialization.MemberInfoProxy.GetCustomAttributes(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:NullSoftware.Serialization.MemberInfoProxy.GetCustomAttributes(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:NullSoftware.Serialization.MemberInfoProxy.IsDefined(System.Type,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:NullSoftware.Serialization.MemberInfoProxy.ToString">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>

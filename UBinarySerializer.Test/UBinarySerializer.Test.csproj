@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>NullSoftware.Serialization.Test</RootNamespace>
+    <AssemblyName>testrun</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UBinarySerializer\UBinarySerializer.csproj" />
+  </ItemGroup>
+
+</Project>
