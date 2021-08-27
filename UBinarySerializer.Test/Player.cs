@@ -27,11 +27,6 @@ namespace NullSoftware.Serialization.Test
         public List<Item> Items { get; set; }
             = new List<Item>();
 
-        public override int GetHashCode()
-        {
-            return Health ^ Hunger;
-        }
-
         public override bool Equals(object obj)
         {
             return Equals(obj as Player);
