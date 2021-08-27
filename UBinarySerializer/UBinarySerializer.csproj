@@ -10,6 +10,10 @@
     <Company>Null Software</Company>
     <Product>UBinarySerializer</Product>
     <Description></Description>
+    <RepositoryUrl>https://github.com/nullsoftware/UBinarySerializer</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Serializer; BinarySerializer; Serialization; BinarySerialization;</PackageTags>
+    <PackageProjectUrl>https://github.com/nullsoftware/UBinarySerializer</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
