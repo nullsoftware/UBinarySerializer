@@ -5,13 +5,10 @@ namespace NullSoftware.Serialization.Test
 {
     public struct Vector3 : IEquatable<Vector3>, ICloneable, IFormattable
     {
-        [BinIndex(0)]
         public float X { get; set; }
 
-        [BinIndex(1)]
         public float Y { get; set; }
 
-        [BinIndex(2)]
         public float Z { get; set; }
 
         public Vector3(float x, float y)

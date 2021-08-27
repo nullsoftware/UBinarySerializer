@@ -65,7 +65,7 @@ namespace NullSoftware.Serialization
     public class BinarySerializer<T> : BinarySerializer where T : new()
     {
         /// <summary>
-        /// Gets default encoding for current instance of serializer.
+        /// Gets or sets default encoding for current instance of serializer.
         /// </summary>
         public Encoding DefaultEncoding { get; set; } = Encoding.UTF8;
 
@@ -90,11 +90,13 @@ namespace NullSoftware.Serialization
             {
                 BinIndexAttribute binIndex = field.GetCustomAttribute<BinIndexAttribute>();
 
-                if (binIndex is null)
-                    continue;
-
                 if (field.IsInitOnly)
-                    throw new InvalidOperationException($"Field '{field.Name}' in '{targetType}' should not be readonly.");
+                {
+                    if (binIndex is not null)
+                        throw new InvalidOperationException($"Field '{field.Name}' in '{targetType}' should not be readonly.");
+                    else
+                        continue;
+                }
 
                 bindingsTmp.Add(new MemberInfoProxy(field), binIndex);
             }
@@ -103,19 +105,41 @@ namespace NullSoftware.Serialization
             {
                 BinIndexAttribute binIndex = prop.GetCustomAttribute<BinIndexAttribute>();
 
-                if (binIndex is null)
-                    continue;
-
                 if (!prop.CanRead || !prop.CanWrite)
-                    throw new InvalidOperationException($"Property '{prop.Name}' in '{targetType}' should have get and set methods.");
+                {
+                    if (binIndex is not null)
+                        throw new InvalidOperationException($"Property '{prop.Name}' in '{targetType}' should have get and set methods.");
+                    else
+                        continue;
+                }
 
                 bindingsTmp.Add(new MemberInfoProxy(prop), binIndex);
             }
 
-            int[] indexes = bindingsTmp.Values.Select(t => t.Index).ToArray();
+            if (bindingsTmp.Values.Any(t => t is not null))
+            {
+                // remove all memebers without 'BinIndexAttribute'
+                bindingsTmp.Where(t => t.Value is null)
+                    .Select(t => t.Key)
+                    .ToList()
+                    .ForEach(t => bindingsTmp.Remove(t));
 
-            if (indexes.Length != indexes.Distinct().Count())
-                throw new InvalidOperationException($"'{targetType}' contains members with same index.");
+                int[] indexes = bindingsTmp.Values.Select(t => t.Index).ToArray();
+
+                if (indexes.Length != indexes.Distinct().Count())
+                    throw new InvalidOperationException($"'{targetType}' contains members with same index.");
+            }
+            else
+            {
+                // if there is no members with 'BinIndexAttribute'
+                // need to create indexes for all elements
+
+                int i = 0;
+                foreach (MemberInfoProxy member in bindingsTmp.Keys)
+                {
+                    bindingsTmp[member] = new BinIndexAttribute(i++);
+                }
+            }
 
             if (bindingsTmp.Any() == false)
                 throw new InvalidOperationException($"No members in '{targetType}' to serialize.");

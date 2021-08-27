@@ -4,6 +4,42 @@
         <name>ubinser</name>
     </assembly>
     <members>
+        <member name="P:NullSoftware.Serialization.BinarySerializer.Converters">
+            <summary>
+            Gets converters collection that used in current serializer.
+            </summary>
+            <remarks>
+            Each converter is bonded to object type.
+            </remarks>
+        </member>
+        <member name="T:NullSoftware.Serialization.BinarySerializer`1">
+            <summary>
+            Serializes and deserializes an specified object in binary format.
+            </summary>
+            <typeparam name="T">Type of object to serialize/deserialize.</typeparam>
+        </member>
+        <member name="P:NullSoftware.Serialization.BinarySerializer`1.DefaultEncoding">
+            <summary>
+            Gets or sets default encoding for current instance of serializer.
+            </summary>
+        </member>
+        <member name="M:NullSoftware.Serialization.BinarySerializer`1.IsListType(System.Type)">
+            <summary>
+            Determinants whether specified type is derived from list type.
+            </summary>
+            <param name="type">Type to check for list.</param>
+            <returns>true is current type is derived from list type, otherwise false.</returns>
+        </member>
+        <member name="M:NullSoftware.Serialization.BinarySerializer`1.GetListItemType(System.Type)">
+            <summary>
+            Gets list element type from specified type.
+            </summary>
+            <param name="listType">Type that derived from <see cref="T:System.Collections.Generic.IList`1"/>.</param>
+            <returns>Element type of <see cref="T:System.Collections.Generic.IList`1"/>.</returns>
+        </member>
+        <member name="M:NullSoftware.Serialization.BinarySerializer`1.ToString">
+            <inheritdoc/>
+        </member>
         <member name="T:NullSoftware.Serialization.IBinaryConverter">
             <summary>
             Represents a methods which needed for binary serialization or deserialization.
@@ -38,22 +74,22 @@
         </member>
         <member name="P:NullSoftware.Serialization.MemberInfoProxy.MemberInfo">
             <summary>
-            Wrapped member.
+            Gets wrapped member.
             </summary>
         </member>
         <member name="P:NullSoftware.Serialization.MemberInfoProxy.MemberTargetType">
             <summary>
-            Original type of field or property.
+            Gets original type of field or property.
             </summary>
         </member>
         <member name="P:NullSoftware.Serialization.MemberInfoProxy.SafeMemberTargetType">
             <summary>
-            Safe type of field or property, that can be used by serializer.
+            Gets safe type of field or property, that can be used by serializer.
             </summary>
         </member>
         <member name="P:NullSoftware.Serialization.MemberInfoProxy.IsReadOnly">
             <summary>
-            Is current member readonly.
+            Gets a value indicating whether the current member is readonly.
             </summary>
         </member>
         <member name="P:NullSoftware.Serialization.MemberInfoProxy.Name">
