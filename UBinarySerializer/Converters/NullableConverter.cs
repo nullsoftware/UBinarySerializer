@@ -12,9 +12,9 @@ namespace NullSoftware.Serialization.Converters
     {
         public IBinaryConverter InnerConverter { get; }
 
-        public NullableConverter(IBinaryConverter innerTypeConverter)
+        public NullableConverter(IBinaryConverter innerConverter)
         {
-            InnerConverter = innerTypeConverter ?? throw new ArgumentNullException(nameof(innerTypeConverter));
+            InnerConverter = innerConverter ?? throw new ArgumentNullException(nameof(innerConverter));
         }
 
         public void ToBytes(MemberInfo member, BinaryWriter stream, object value, object parameter)
@@ -32,7 +32,7 @@ namespace NullSoftware.Serialization.Converters
             T? nullableValue = new T?();
 
             if (stream.ReadBoolean())
-                nullableValue = (T)ToValue(member, stream, parameter);
+                nullableValue = (T)InnerConverter.ToValue(member, stream, parameter);
 
             return nullableValue;
         }
