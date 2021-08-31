@@ -10,6 +10,9 @@ using NullSoftware.Serialization.Converters;
 
 namespace NullSoftware.Serialization
 {
+    /// <summary>
+    /// Base class for binary serializer.
+    /// </summary>
     public abstract class BinarySerializer
     {
         internal abstract ushort LatestGeneration { get; } // latest generation of target type
@@ -22,11 +25,22 @@ namespace NullSoftware.Serialization
         /// </remarks>
         protected IDictionary<Type, IBinaryConverter> Converters { get; }
 
+        /// <summary>
+        /// Initializes default properties.
+        /// </summary>
+        /// <param name="converters">
+        /// Instance of converters dictionary. 
+        /// If argument is null will be used <see cref="InitializeDefaultConverters"/> method.
+        /// </param>
         protected BinarySerializer(IDictionary<Type, IBinaryConverter> converters)
         {
             Converters = converters ?? InitializeDefaultConverters();
         }
 
+        /// <summary>
+        /// Initializes default converters for current serializer.
+        /// </summary>
+        /// <returns>Default converters that will be used by current serializer.</returns>
         protected virtual IDictionary<Type, IBinaryConverter> InitializeDefaultConverters()
         {
             return new Dictionary<Type, IBinaryConverter>()
@@ -85,6 +99,12 @@ namespace NullSoftware.Serialization
 
         #region Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinarySerializer{T}"/>
+        /// with specified converters and custom converters.
+        /// </summary>
+        /// <param name="converters">Main converters dictionary, which must contains serializer converters.</param>
+        /// <param name="customConverters">Custom converters, that will be merged with <paramref name="converters"/>.</param>
         protected BinarySerializer(IDictionary<Type, IBinaryConverter> converters, 
             ICollection<KeyValuePair<Type, IBinaryConverter>> customConverters) : base(converters)
         {
@@ -271,11 +291,20 @@ namespace NullSoftware.Serialization
             IsClass = targetType.IsClass;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinarySerializer{T}"/>
+        /// using default converters.
+        /// </summary>
         public BinarySerializer() : this(null, null)
         {
             
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinarySerializer{T}"/>
+        /// with specified custom converters.
+        /// </summary>
+        /// <param name="customConverters">Custom serializer converters.</param>
         public BinarySerializer(ICollection<KeyValuePair<Type, IBinaryConverter>> customConverters) : this(null, customConverters)
         {
             
@@ -484,7 +513,11 @@ namespace NullSoftware.Serialization
 
         private ushort GetLatestGeneration(IList<BinarySerializer> serializers)
         {
-            return serializers.Select(t => t.LatestGeneration).Concat(_bindings.Values.Select(t => t.Generation)).OrderBy(t => t).Last();
+            return serializers
+                .Select(t => t.LatestGeneration)
+                .Concat(_bindings.Values.Select(t => t.Generation))
+                .OrderBy(t => t)
+                .Last();
         }
 
         private void SerializeMember(MemberInfoProxy member, BinaryWriter stream, ref object obj, object parameter)
