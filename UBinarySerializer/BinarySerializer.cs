@@ -101,7 +101,7 @@ namespace NullSoftware.Serialization
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinarySerializer{T}"/>
-        /// with specified converters and custom converters.
+        /// with specified main converters and custom converters.
         /// </summary>
         /// <param name="converters">Main converters dictionary, which must contains serializer converters.</param>
         /// <param name="customConverters">Custom converters, that will be merged with <paramref name="converters"/>.</param>

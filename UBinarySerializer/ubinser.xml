@@ -4,6 +4,11 @@
         <name>ubinser</name>
     </assembly>
     <members>
+        <member name="T:NullSoftware.Serialization.BinarySerializer">
+            <summary>
+            Base class for binary serializer.
+            </summary>
+        </member>
         <member name="P:NullSoftware.Serialization.BinarySerializer.Converters">
             <summary>
             Gets converters collection that used in current serializer.
@@ -11,6 +16,21 @@
             <remarks>
             Each converter is bonded to object type.
             </remarks>
+        </member>
+        <member name="M:NullSoftware.Serialization.BinarySerializer.#ctor(System.Collections.Generic.IDictionary{System.Type,NullSoftware.Serialization.IBinaryConverter})">
+            <summary>
+            Initializes default properties.
+            </summary>
+            <param name="converters">
+            Instance of converters dictionary. 
+            If argument is null will be used <see cref="M:NullSoftware.Serialization.BinarySerializer.InitializeDefaultConverters"/> method.
+            </param>
+        </member>
+        <member name="M:NullSoftware.Serialization.BinarySerializer.InitializeDefaultConverters">
+            <summary>
+            Initializes default converters for current serializer.
+            </summary>
+            <returns>Default converters that will be used by current serializer.</returns>
         </member>
         <member name="T:NullSoftware.Serialization.BinarySerializer`1">
             <summary>
@@ -35,6 +55,27 @@
             serialization target is reference type.
             </summary>
         </member>
+        <member name="M:NullSoftware.Serialization.BinarySerializer`1.#ctor(System.Collections.Generic.IDictionary{System.Type,NullSoftware.Serialization.IBinaryConverter},System.Collections.Generic.ICollection{System.Collections.Generic.KeyValuePair{System.Type,NullSoftware.Serialization.IBinaryConverter}})">
+            <summary>
+            Initializes a new instance of the <see cref="T:NullSoftware.Serialization.BinarySerializer`1"/>
+            with specified converters and custom converters.
+            </summary>
+            <param name="converters">Main converters dictionary, which must contains serializer converters.</param>
+            <param name="customConverters">Custom converters, that will be merged with <paramref name="converters"/>.</param>
+        </member>
+        <member name="M:NullSoftware.Serialization.BinarySerializer`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NullSoftware.Serialization.BinarySerializer`1"/>
+            using default converters.
+            </summary>
+        </member>
+        <member name="M:NullSoftware.Serialization.BinarySerializer`1.#ctor(System.Collections.Generic.ICollection{System.Collections.Generic.KeyValuePair{System.Type,NullSoftware.Serialization.IBinaryConverter}})">
+            <summary>
+            Initializes a new instance of the <see cref="T:NullSoftware.Serialization.BinarySerializer`1"/>
+            with specified custom converters.
+            </summary>
+            <param name="customConverters">Custom serializer converters.</param>
+        </member>
         <member name="M:NullSoftware.Serialization.BinarySerializer`1.IsListType(System.Type)">
             <summary>
             Determinants whether specified type is derived from list type.
@@ -50,6 +91,34 @@
             <returns>Element type of <see cref="T:System.Collections.Generic.IList`1"/>.</returns>
         </member>
         <member name="M:NullSoftware.Serialization.BinarySerializer`1.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:NullSoftware.Serialization.BinIndexAttribute">
+            <summary>
+            Specifies the index for binary serializaion.
+            </summary>
+        </member>
+        <member name="P:NullSoftware.Serialization.BinIndexAttribute.Index">
+            <summary>
+            Gets index of current attribute.
+            </summary>
+        </member>
+        <member name="P:NullSoftware.Serialization.BinIndexAttribute.Generation">
+            <summary>
+            Gets or sets member generation.
+            </summary>
+        </member>
+        <member name="M:NullSoftware.Serialization.BinIndexAttribute.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NullSoftware.Serialization.BinIndexAttribute"/>
+            with specified binary index.
+            </summary>
+            <param name="index">
+            Binary index of member that will be used during serilization 
+            or deserialization to place members in correct order.
+            </param>
+        </member>
+        <member name="M:NullSoftware.Serialization.BinIndexAttribute.ToString">
             <inheritdoc/>
         </member>
         <member name="T:NullSoftware.Serialization.IBinaryConverter">
