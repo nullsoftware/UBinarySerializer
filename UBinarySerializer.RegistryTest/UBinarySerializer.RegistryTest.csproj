@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>NullSoftware.Serialization.RegistryTest</RootNamespace>
+    <AssemblyName>regtest</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

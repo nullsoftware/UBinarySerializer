@@ -23,6 +23,18 @@
             Gets or sets default encoding for current instance of serializer.
             </summary>
         </member>
+        <member name="P:NullSoftware.Serialization.BinarySerializer`1.LatestGeneration">
+            <summary>
+            Gets a latest generation of field or property
+            from current and child serializers using <see cref="T:NullSoftware.Serialization.BinIndexAttribute"/>.
+            </summary>
+        </member>
+        <member name="P:NullSoftware.Serialization.BinarySerializer`1.IsClass">
+            <summary>
+            Gets a value indicating whether the current 
+            serialization target is reference type.
+            </summary>
+        </member>
         <member name="M:NullSoftware.Serialization.BinarySerializer`1.IsListType(System.Type)">
             <summary>
             Determinants whether specified type is derived from list type.

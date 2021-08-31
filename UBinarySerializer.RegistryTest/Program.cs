@@ -12,6 +12,9 @@ namespace NullSoftware.Serialization.RegistryTest
             // for test was used WinRAR app
             // and it's registry-stored settings
 
+            // [WARNING]: do not run app
+            // if you have not installed WinRAR
+
             // [REMARK]: target app (WinRAR) should be closed
             // before run of current app, and opened after completion
 

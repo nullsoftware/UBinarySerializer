@@ -64,25 +64,45 @@ namespace NullSoftware.Serialization
     /// <typeparam name="T">Type of object to serialize/deserialize.</typeparam>
     public class BinarySerializer<T> : BinarySerializer where T : new()
     {
+        private readonly Dictionary<MemberInfoProxy, BinIndexAttribute> _bindings;
+
         /// <summary>
         /// Gets or sets default encoding for current instance of serializer.
         /// </summary>
         public Encoding DefaultEncoding { get; set; } = Encoding.UTF8;
 
-        private readonly Dictionary<MemberInfoProxy, BinIndexAttribute> _bindings;
-
+        /// <summary>
+        /// Gets a latest generation of field or property
+        /// from current and child serializers using <see cref="BinIndexAttribute"/>.
+        /// </summary>
         internal override ushort LatestGeneration { get; }
 
+        /// <summary>
+        /// Gets a value indicating whether the current 
+        /// serialization target is reference type.
+        /// </summary>
         private bool IsClass { get; }
 
         #region Constructors
 
-        protected BinarySerializer(IDictionary<Type, IBinaryConverter> converters) : base(converters)
+        protected BinarySerializer(IDictionary<Type, IBinaryConverter> converters, 
+            ICollection<KeyValuePair<Type, IBinaryConverter>> customConverters) : base(converters)
         {
             Type targetType = typeof(T);
 
             if (targetType.IsPrimitive || targetType.IsEnum || targetType.IsArray)
                 throw new ArgumentException("Can not create serializer for current type.");
+
+            if (customConverters != null)
+            {
+                foreach (var pair in customConverters)
+                {
+                    if (Converters.ContainsKey(pair.Key))
+                        Converters[pair.Key] = pair.Value;
+                    else
+                        Converters.Add(pair.Key, pair.Value);
+                }
+            }
 
             Dictionary<MemberInfoProxy, BinIndexAttribute> bindingsTmp = new Dictionary<MemberInfoProxy, BinIndexAttribute>();
 
@@ -212,7 +232,7 @@ namespace NullSoftware.Serialization
                             typeof(BinarySerializer<>).MakeGenericType(nullableInnerType ?? memberType),
                             BindingFlags.Instance | BindingFlags.NonPublic,
                             null,
-                            new object[] { Converters },
+                            new object[] { Converters, null },
                             null);
 
                         serializersTmp.Add(serializer);
@@ -251,10 +271,14 @@ namespace NullSoftware.Serialization
             IsClass = targetType.IsClass;
         }
 
-        public BinarySerializer() : this(null)
+        public BinarySerializer() : this(null, null)
         {
-            //if (typeof(T).GetCustomAttribute<SerializableAttribute>() is null)
-            //    throw new NotSupportedException("Target type should be marked as 'Serializable'.");
+            
+        }
+
+        public BinarySerializer(ICollection<KeyValuePair<Type, IBinaryConverter>> customConverters) : this(null, customConverters)
+        {
+            
         }
 
         #endregion
