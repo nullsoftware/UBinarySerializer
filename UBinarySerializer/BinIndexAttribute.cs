@@ -34,7 +34,7 @@ namespace NullSoftware.Serialization
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"{Index} ({nameof(Generation)}: {Generation})";
+            return $"[{Index}] ({nameof(Generation)}: {Generation})";
         }
     }
 }

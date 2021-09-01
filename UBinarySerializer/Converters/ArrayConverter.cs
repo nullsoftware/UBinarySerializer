@@ -1,23 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NullSoftware.Serialization.Converters
 {
     public class ArrayConverter : IBinaryConverter
     {
-        public Type TargetArrayElementType { get; }
+        public Type ArrayElementType { get; }
 
         public IBinaryConverter InnerConverter { get; }
 
         public ArrayConverter(Type arrayElementType, IBinaryConverter innerConverter)
         {
-            TargetArrayElementType = arrayElementType ?? throw new ArgumentNullException(nameof(arrayElementType));
+            ArrayElementType = arrayElementType ?? throw new ArgumentNullException(nameof(arrayElementType));
             InnerConverter = innerConverter ?? throw new ArgumentNullException(nameof(innerConverter));
         }
 
@@ -53,7 +49,7 @@ namespace NullSoftware.Serialization.Converters
             if (length == -1)
                 return null;
 
-            Array array = Array.CreateInstance(TargetArrayElementType, length);
+            Array array = Array.CreateInstance(ArrayElementType, length);
 
             for (int i = 0; i < length; i++)
             {

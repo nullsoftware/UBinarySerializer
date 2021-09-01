@@ -302,7 +302,7 @@ namespace NullSoftware.Serialization
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinarySerializer{T}"/>
-        /// with specified custom converters.
+        /// using custom converters.
         /// </summary>
         /// <param name="customConverters">Custom serializer converters.</param>
         public BinarySerializer(ICollection<KeyValuePair<Type, IBinaryConverter>> customConverters) : this(null, customConverters)
