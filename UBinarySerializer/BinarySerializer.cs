@@ -81,9 +81,9 @@ namespace NullSoftware.Serialization
         private readonly Dictionary<MemberInfoProxy, BinIndexAttribute> _bindings;
 
         /// <summary>
-        /// Gets or sets default encoding for current instance of serializer.
+        /// Gets default encoding for current instance of serializer.
         /// </summary>
-        public Encoding DefaultEncoding { get; set; } = Encoding.UTF8;
+        public virtual Encoding DefaultEncoding { get; } = Encoding.UTF8;
 
         /// <summary>
         /// Gets a latest generation of field or property
@@ -105,7 +105,7 @@ namespace NullSoftware.Serialization
         /// </summary>
         /// <param name="converters">Main converters dictionary, which must contains serializer converters.</param>
         /// <param name="customConverters">Custom converters, that will be merged with <paramref name="converters"/>.</param>
-        protected BinarySerializer(IDictionary<Type, IBinaryConverter> converters, 
+        protected BinarySerializer(IDictionary<Type, IBinaryConverter> converters,
             ICollection<KeyValuePair<Type, IBinaryConverter>> customConverters) : base(converters)
         {
             Type targetType = typeof(T);
@@ -191,7 +191,7 @@ namespace NullSoftware.Serialization
             {
                 Type memberType = member.MemberTargetType;
                 List<Type> enumerableTypes = new List<Type>();
-                
+
             MemberCheck:
                 if (memberType.IsArray)
                 {
@@ -201,7 +201,7 @@ namespace NullSoftware.Serialization
                     goto MemberCheck;
                 }
 
-                if (IsListType(memberType))
+                if (CheckIfListType(memberType))
                 {
                     enumerableTypes.Add(memberType);
                     memberType = GetListItemType(memberType);
@@ -277,7 +277,7 @@ namespace NullSoftware.Serialization
                         {
                             if (t.IsArray)
                                 currentConverter = new ArrayConverter(t.GetElementType(), currentConverter);
-                            else if (IsListType(t))
+                            else if (CheckIfListType(t))
                                 currentConverter = new ListConverter(t, currentConverter);
 
                             if (!Converters.ContainsKey(t))
@@ -297,7 +297,7 @@ namespace NullSoftware.Serialization
         /// </summary>
         public BinarySerializer() : this(null, null)
         {
-            
+
         }
 
         /// <summary>
@@ -307,7 +307,7 @@ namespace NullSoftware.Serialization
         /// <param name="customConverters">Custom serializer converters.</param>
         public BinarySerializer(ICollection<KeyValuePair<Type, IBinaryConverter>> customConverters) : this(null, customConverters)
         {
-            
+
         }
 
         #endregion
@@ -491,7 +491,7 @@ namespace NullSoftware.Serialization
         /// </summary>
         /// <param name="type">Type to check for list.</param>
         /// <returns>true is current type is derived from list type, otherwise false.</returns>
-        protected virtual bool IsListType(Type type)
+        protected virtual bool CheckIfListType(Type type)
         {
             return type.IsGenericType && type.GetInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IList<>));
         }
@@ -536,8 +536,8 @@ namespace NullSoftware.Serialization
             Type memberType = member.SafeMemberTargetType;
 
             member.SetValue(obj, Converters[memberType].ToValue(
-                member.MemberInfo, 
-                stream, 
+                member.MemberInfo,
+                stream,
                 parameter));
         }
 
