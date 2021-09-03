@@ -29,7 +29,7 @@
         <member name="M:NullSoftware.Serialization.BinarySerializer.InitializeDefaultConverters">
             <summary>
             Initializes default converters for current serializer.
-            Must contain all converters for primitive types.
+            Must contain all primitive type converters.
             </summary>
             <returns>Default converters that will be used by current serializer.</returns>
         </member>

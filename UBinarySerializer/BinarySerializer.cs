@@ -266,7 +266,7 @@ namespace NullSoftware.Serialization
                         if (nullableType is not null)
                         {
                             IBinaryConverter converter = (IBinaryConverter)Activator.CreateInstance(
-                                typeof(NullableConverter<>).MakeGenericType(nullableType),
+                                typeof(NullableConverter<>).MakeGenericType(memberType),
                                 Converters[memberType]);
 
                             Converters.Add(nullableType, converter);
