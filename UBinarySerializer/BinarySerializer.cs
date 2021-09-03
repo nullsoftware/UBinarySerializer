@@ -39,6 +39,7 @@ namespace NullSoftware.Serialization
 
         /// <summary>
         /// Initializes default converters for current serializer.
+        /// Must contain all primitive type converters.
         /// </summary>
         /// <returns>Default converters that will be used by current serializer.</returns>
         protected virtual IDictionary<Type, IBinaryConverter> InitializeDefaultConverters()
@@ -173,7 +174,6 @@ namespace NullSoftware.Serialization
             {
                 // if there is no members with 'BinIndexAttribute'
                 // need to create indexes for all elements
-
                 int i = 0;
                 foreach (MemberInfoProxy member in bindingsTmp.Keys)
                 {
@@ -220,11 +220,11 @@ namespace NullSoftware.Serialization
                     if (memberType.IsPrimitive || Converters.ContainsKey(memberType))
                         continue;
 
-                    Type nullableInnerType = null;
+                    Type nullableType = null;
 
                     if (memberType.IsValueType)
                     {
-                        nullableInnerType = Nullable.GetUnderlyingType(memberType);
+                        Type nullableInnerType = Nullable.GetUnderlyingType(memberType);
 
                         if (nullableInnerType is not null)
                         {
@@ -243,13 +243,18 @@ namespace NullSoftware.Serialization
 
                                 continue;
                             }
+                            else
+                            {
+                                nullableType = memberType;
+                                memberType = nullableInnerType;
+                            }
                         }
                     }
 
                     if (memberType.IsClass || memberType.IsValueType)
                     {
                         BinarySerializer serializer = (BinarySerializer)Activator.CreateInstance(
-                            typeof(BinarySerializer<>).MakeGenericType(nullableInnerType ?? memberType),
+                            typeof(BinarySerializer<>).MakeGenericType(memberType),
                             BindingFlags.Instance | BindingFlags.NonPublic,
                             null,
                             new object[] { Converters, null },
@@ -258,19 +263,19 @@ namespace NullSoftware.Serialization
                         serializersTmp.Add(serializer);
                         Converters.Add(memberType, new BinarySerializerConverter(serializer));
 
-                        if (nullableInnerType is not null)
+                        if (nullableType is not null)
                         {
                             IBinaryConverter converter = (IBinaryConverter)Activator.CreateInstance(
-                                typeof(NullableConverter<>).MakeGenericType(nullableInnerType),
-                                serializer);
+                                typeof(NullableConverter<>).MakeGenericType(nullableType),
+                                Converters[memberType]);
 
-                            Converters.Add(memberType, converter);
+                            Converters.Add(nullableType, converter);
                         }
                     }
                 }
                 finally
                 {
-                    if (enumerableTypes.Any())
+                    if (enumerableTypes.Any() && !Converters.ContainsKey(enumerableTypes.First()))
                     {
                         IBinaryConverter currentConverter = Converters[memberType];
                         foreach (Type t in enumerableTypes.Reverse<Type>())

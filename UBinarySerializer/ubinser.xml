@@ -29,6 +29,7 @@
         <member name="M:NullSoftware.Serialization.BinarySerializer.InitializeDefaultConverters">
             <summary>
             Initializes default converters for current serializer.
+            Must contain all converters for primitive types.
             </summary>
             <returns>Default converters that will be used by current serializer.</returns>
         </member>
@@ -40,7 +41,7 @@
         </member>
         <member name="P:NullSoftware.Serialization.BinarySerializer`1.DefaultEncoding">
             <summary>
-            Gets or sets default encoding for current instance of serializer.
+            Gets default encoding for current instance of serializer.
             </summary>
         </member>
         <member name="P:NullSoftware.Serialization.BinarySerializer`1.LatestGeneration">
@@ -58,7 +59,7 @@
         <member name="M:NullSoftware.Serialization.BinarySerializer`1.#ctor(System.Collections.Generic.IDictionary{System.Type,NullSoftware.Serialization.IBinaryConverter},System.Collections.Generic.ICollection{System.Collections.Generic.KeyValuePair{System.Type,NullSoftware.Serialization.IBinaryConverter}})">
             <summary>
             Initializes a new instance of the <see cref="T:NullSoftware.Serialization.BinarySerializer`1"/>
-            with specified converters and custom converters.
+            with specified main converters and custom converters.
             </summary>
             <param name="converters">Main converters dictionary, which must contains serializer converters.</param>
             <param name="customConverters">Custom converters, that will be merged with <paramref name="converters"/>.</param>
@@ -72,11 +73,11 @@
         <member name="M:NullSoftware.Serialization.BinarySerializer`1.#ctor(System.Collections.Generic.ICollection{System.Collections.Generic.KeyValuePair{System.Type,NullSoftware.Serialization.IBinaryConverter}})">
             <summary>
             Initializes a new instance of the <see cref="T:NullSoftware.Serialization.BinarySerializer`1"/>
-            with specified custom converters.
+            using custom converters.
             </summary>
             <param name="customConverters">Custom serializer converters.</param>
         </member>
-        <member name="M:NullSoftware.Serialization.BinarySerializer`1.IsListType(System.Type)">
+        <member name="M:NullSoftware.Serialization.BinarySerializer`1.CheckIfListType(System.Type)">
             <summary>
             Determinants whether specified type is derived from list type.
             </summary>
