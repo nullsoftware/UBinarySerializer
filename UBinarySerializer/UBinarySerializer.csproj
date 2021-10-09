@@ -14,10 +14,12 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>Serializer; BinarySerializer; Serialization; BinarySerialization;</PackageTags>
     <PackageProjectUrl>https://github.com/nullsoftware/UBinarySerializer</PackageProjectUrl>
+    <Copyright>Copyright © Null Software, 2021. All rights reserved.</Copyright>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\Users\User\Documents\Visual Studio 2019\Projects\UBinarySerializer\UBinarySerializer\ubinser.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

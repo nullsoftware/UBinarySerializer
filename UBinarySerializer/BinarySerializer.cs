@@ -116,6 +116,7 @@ namespace NullSoftware.Serialization
 
             if (customConverters != null)
             {
+                // merge custom converters with main converters
                 foreach (var pair in customConverters)
                 {
                     if (Converters.ContainsKey(pair.Key))

@@ -14,6 +14,7 @@ namespace NullSoftware.Serialization.Test
 
             BinarySerializer<Player> serializer = RunAction(() => new BinarySerializer<Player>(), "Initialization");
 
+            // test data
             Player p = new Player();
             p.Health = 23;
             p.Hunger = 234;
