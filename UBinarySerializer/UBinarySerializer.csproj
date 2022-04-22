@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.0;netcoreapp3.1;net45;net451;net452;net46;net461;net462;net47;net471;net472;net48;net5.0</TargetFrameworks>
     <RootNamespace>NullSoftware.Serialization</RootNamespace>
     <AssemblyName>ubinser</AssemblyName>
     <Version>1.0.0.0</Version>
@@ -16,10 +16,12 @@
     <PackageProjectUrl>https://github.com/nullsoftware/UBinarySerializer</PackageProjectUrl>
     <Copyright>Copyright © Null Software, 2021. All rights reserved.</Copyright>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
-  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
 
 </Project>

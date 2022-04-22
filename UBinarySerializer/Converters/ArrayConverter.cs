@@ -23,7 +23,7 @@ namespace NullSoftware.Serialization.Converters
 
             if (array is null)
             {
-                if (member.GetCustomAttribute<RequiredAttribute>() is not null)
+                if (member.GetCustomAttribute<RequiredAttribute>() != null)
                     throw new ArgumentNullException(nameof(value), $"Member {member.Name} can not have null value.");
 
                 stream.Write(-1); // means that array is null

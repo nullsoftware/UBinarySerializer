@@ -26,7 +26,7 @@ namespace NullSoftware.Serialization.Converters
 
             if (list is null)
             {
-                if (member.GetCustomAttribute<RequiredAttribute>() is not null)
+                if (member.GetCustomAttribute<RequiredAttribute>() != null)
                     throw new ArgumentNullException(nameof(value), $"Member {member.Name} can not have null value.");
 
                 stream.Write(-1); // means that list is null

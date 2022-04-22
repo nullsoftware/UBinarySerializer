@@ -134,7 +134,7 @@ namespace NullSoftware.Serialization
 
                 if (field.IsInitOnly)
                 {
-                    if (binIndex is not null)
+                    if (binIndex != null)
                         throw new InvalidOperationException($"Field '{field.Name}' in '{targetType}' should not be readonly.");
                     else
                         continue;
@@ -149,7 +149,7 @@ namespace NullSoftware.Serialization
 
                 if (!prop.CanRead || !prop.CanWrite)
                 {
-                    if (binIndex is not null)
+                    if (binIndex != null)
                         throw new InvalidOperationException($"Property '{prop.Name}' in '{targetType}' should have get and set methods.");
                     else
                         continue;
@@ -158,7 +158,7 @@ namespace NullSoftware.Serialization
                 bindingsTmp.Add(new MemberInfoProxy(prop), binIndex);
             }
 
-            if (bindingsTmp.Values.Any(t => t is not null))
+            if (bindingsTmp.Values.Any(t => t != null))
             {
                 // remove all memebers without 'BinIndexAttribute'
                 bindingsTmp.Where(t => t.Value is null)
@@ -227,7 +227,7 @@ namespace NullSoftware.Serialization
                     {
                         Type nullableInnerType = Nullable.GetUnderlyingType(memberType);
 
-                        if (nullableInnerType is not null)
+                        if (nullableInnerType != null)
                         {
                             if (nullableInnerType.IsEnum)
                             {
@@ -264,7 +264,7 @@ namespace NullSoftware.Serialization
                         serializersTmp.Add(serializer);
                         Converters.Add(memberType, new BinarySerializerConverter(serializer));
 
-                        if (nullableType is not null)
+                        if (nullableType != null)
                         {
                             IBinaryConverter converter = (IBinaryConverter)Activator.CreateInstance(
                                 typeof(NullableConverter<>).MakeGenericType(memberType),
@@ -350,7 +350,6 @@ namespace NullSoftware.Serialization
         }
 
         public byte[] Serialize(T value) => Serialize(value, DefaultEncoding);
-
 
         public void SerializeUnsafe(Stream stream, T value, Encoding encoding)
         {
@@ -438,7 +437,7 @@ namespace NullSoftware.Serialization
             {
                 if (allowNullValue)
                 {
-                    stream.Write(value is not null);
+                    stream.Write(value != null);
 
                     if (value is null)
                         return;

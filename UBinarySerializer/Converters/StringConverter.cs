@@ -12,14 +12,14 @@ namespace NullSoftware.Serialization.Converters
         {
             string str = (string)value;
 
-            if (member.GetCustomAttribute<RequiredAttribute>() is not null || parameter is null)
+            if (member.GetCustomAttribute<RequiredAttribute>() != null || parameter is null)
             {
                 if (str is null)
                     throw new ArgumentNullException(nameof(value), $"Member {member.Name} can not have null value.");
             }
             else
             {
-                stream.Write(str is not null);
+                stream.Write(str != null);
             }
 
             stream.Write(str);
@@ -27,7 +27,7 @@ namespace NullSoftware.Serialization.Converters
 
         public object ToValue(MemberInfo member, BinaryReader stream, object parameter)
         {
-            if (member.GetCustomAttribute<RequiredAttribute>() is not null || parameter is null)
+            if (member.GetCustomAttribute<RequiredAttribute>() != null || parameter is null)
             {
                 return stream.ReadString();
             }
