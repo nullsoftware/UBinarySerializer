@@ -84,7 +84,7 @@ namespace NullSoftware.Serialization
         /// <summary>
         /// Gets default encoding for current instance of serializer.
         /// </summary>
-        public virtual Encoding DefaultEncoding { get; } = Encoding.UTF8;
+        public Encoding DefaultEncoding { get; set; } = Encoding.UTF8;
 
         /// <summary>
         /// Gets a latest generation of field or property
