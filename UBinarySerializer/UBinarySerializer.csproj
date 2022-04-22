@@ -3,13 +3,13 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.0;netcoreapp3.1;net45;net451;net452;net46;net461;net462;net47;net471;net472;net48;net5.0</TargetFrameworks>
     <RootNamespace>NullSoftware.Serialization</RootNamespace>
-    <AssemblyName>ubinser</AssemblyName>
-    <Version>1.0.0.0</Version>
+    <AssemblyName>UBinarySerializer</AssemblyName>
+    <Version>0.0.2-alpha</Version>
     <PackageId>UBinarySerializer</PackageId>
     <Authors>Null Software</Authors>
     <Company>Null Software</Company>
     <Product>UBinarySerializer</Product>
-    <Description></Description>
+    <Description>Library that allows to serialize object to byte array or deserialize from it.</Description>
     <RepositoryUrl>https://github.com/nullsoftware/UBinarySerializer</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Serializer; BinarySerializer; Serialization; BinarySerialization;</PackageTags>
@@ -18,10 +18,12 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
+    <FileVersion>0.0.2.0</FileVersion>
+    <AssemblyVersion>0.0.2.0</AssemblyVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  <ItemGroup Condition=" '$(TargetFramework)' != 'NETCOREAPP3_1_OR_GREATER' ">
+    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
 
 </Project>
