@@ -18,7 +18,7 @@ namespace NullSoftware.Serialization.Test
             Player p = new Player();
             p.Health = 23;
             p.Hunger = 234;
-            p.Postion = new Vector3(253.4f, -3123.453f, 93.003f);
+            p.Position = new Vector3(253.4f, -3123.453f, 93.003f);
             p.GameMode = GameMode.Spectator;
             p.Skin = new Texture(@".\data\skin\default.png");
             p.Items.Add(new Item(6345));

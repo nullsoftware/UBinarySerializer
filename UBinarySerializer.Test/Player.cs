@@ -15,7 +15,7 @@ namespace NullSoftware.Serialization.Test
         public int Hunger { get; set; }
 
         [BinIndex(2)]
-        public Vector3 Postion { get; set; }
+        public Vector3 Position { get; set; }
 
         [BinIndex(3)]
         public GameMode GameMode { get; set; }
@@ -39,7 +39,7 @@ namespace NullSoftware.Serialization.Test
 
             return this.Health == other.Health
                 && this.Hunger == other.Hunger
-                && this.Postion == other.Postion
+                && this.Position == other.Position
                 && this.GameMode == other.GameMode
                 && this.Skin?.Path == other.Skin?.Path
                 && this.Items.Count == other.Items.Count
