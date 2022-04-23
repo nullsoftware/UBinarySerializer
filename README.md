@@ -1,7 +1,26 @@
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct-single.svg)](https://stand-with-ukraine.pp.ua)
+
+[![](https://img.shields.io/nuget/vpre/UBinarySerializer)](https://www.nuget.org/packages/UBinarySerializer/)
+[![](https://img.shields.io/nuget/dt/UBinarySerializer)](https://www.nuget.org/packages/UBinarySerializer/)
+
 # UBinarySerializer
 Framework for data binary serialization.
 
 ## Getting started.
+Use one of the follwing methods to install and use this library:
+
+- **Package Manager:**
+
+    ```batch
+    PM> Install-Package UBinarySerializer
+    ```
+
+- **.NET CLI:**
+
+    ```batch
+    > dotnet add package UBinarySerializer
+    ```
+----
 To create serializer for specific object type, 
 you need to create `BinarySerializer<>` instance:
 ```C#
