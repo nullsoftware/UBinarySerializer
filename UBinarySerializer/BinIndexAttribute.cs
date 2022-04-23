@@ -5,7 +5,7 @@ namespace NullSoftware.Serialization
     /// <summary>
     /// Specifies the index for binary serializaion.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
     public class BinIndexAttribute : Attribute
     {
         /// <summary>
@@ -34,7 +34,7 @@ namespace NullSoftware.Serialization
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"[{Index}] ({nameof(Generation)}: {Generation})";
+            return $"{nameof(Index)}: {Index}, {nameof(Generation)}: {Generation}";
         }
     }
 }
