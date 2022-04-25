@@ -2,8 +2,6 @@
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-#pragma warning disable CA1416 // Validate platform compatibility
-
 namespace NullSoftware.Serialization.RegistryTest
 {
     public static class WindowPlacementHelper
