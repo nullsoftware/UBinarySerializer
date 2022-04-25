@@ -27,7 +27,7 @@ you need to create `BinarySerializer<>` instance:
 BinarySerializer<MyObject> serializer = new BinarySerializer<MyObject>();
 ```
 
-Then to serialize object to binary data use `Serialize` or 'SerializeUnsafe' methods.  
+Then to serialize object to binary data use `Serialize` or `SerializeUnsafe` methods.  
 
 Difference between them, is that `Serialize` method serializes the data safely, 
 allows to serialize null-reference objects and saves object data version (generation) for backward-compatibility.  
