@@ -7,7 +7,7 @@ using System.Text;
 
 namespace NullSoftware.Serialization.Converters
 {
-    public class EncdoingConverter : IBinaryConverter
+    public class EncodingConverter : IBinaryConverter
     {
         public void ToBytes(MemberInfo member, BinaryWriter stream, object value, object parameter)
         {
