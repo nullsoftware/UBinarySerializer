@@ -65,6 +65,7 @@ namespace NullSoftware.Serialization
                 [typeof(DateTimeOffset)] = new DateTimeOffsetConverter(),
                 [typeof(Guid)] = new GuidConverter(),
                 [typeof(Version)] = new VersionConverter(),
+                [typeof(Uri)] = new UriConverter(),
             };
         }
 

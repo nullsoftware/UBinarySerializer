@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Reflection;
@@ -6,24 +7,24 @@ using System.Text;
 
 namespace NullSoftware.Serialization.Converters
 {
-    public class StringConverter : IBinaryConverter
+    public class EncdoingConverter : IBinaryConverter
     {
         public void ToBytes(MemberInfo member, BinaryWriter stream, object value, object parameter)
         {
-            string str = (string)value;
+            Encoding enc = (Encoding)value;
 
             if (member.GetCustomAttribute<RequiredAttribute>() != null || parameter is null)
             {
-                if (str is null)
+                if (enc is null)
                     throw new ArgumentNullException(nameof(value), $"Member {member.Name} can not have null value.");
 
-                stream.Write(str);
+                stream.Write(enc.CodePage);
             }
             else
             {
-                stream.Write(str != null);
+                stream.Write(enc != null);
 
-                if (str != null) stream.Write(str);
+                if (enc != null) stream.Write(enc.CodePage);
             }
         }
 
@@ -31,11 +32,11 @@ namespace NullSoftware.Serialization.Converters
         {
             if (member.GetCustomAttribute<RequiredAttribute>() != null || parameter is null)
             {
-                return stream.ReadString();
+                return Encoding.GetEncoding(stream.ReadInt32());
             }
             else
             {
-                return stream.ReadBoolean() ? stream.ReadString() : null;
+                return stream.ReadBoolean() ? Encoding.GetEncoding(stream.ReadInt32()) : null;
             }
         }
     }
