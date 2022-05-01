@@ -212,7 +212,10 @@ namespace NullSoftware.Serialization
                 }
 
                 if (memberType.IsAbstract || memberType.IsInterface || memberType == typeof(object))
-                    throw new InvalidOperationException($"Can not serialize abstract or interface types, like '{memberType}'.");
+                {
+                    if (!Converters.ContainsKey(memberType))
+                        throw new InvalidOperationException($"Can not serialize abstract or interface types, like '{memberType}'.");
+                }
 
                 try
                 {
@@ -321,6 +324,12 @@ namespace NullSoftware.Serialization
 
         #region Serialize & Deserialize Public Methods
 
+        /// <summary>
+        /// Serializes specified object to binary data using specified stream and encoding.
+        /// </summary>
+        /// <param name="stream">The stream used to write the binary data.</param>
+        /// <param name="value">The object to serialize.</param>
+        /// <param name="encoding">The encoding for string serialization.</param>
         public void Serialize(Stream stream, T value, Encoding encoding)
         {
             if (stream is null)
@@ -338,8 +347,20 @@ namespace NullSoftware.Serialization
             }
         }
 
+        /// <summary>
+        /// Serializes specified object to binary data using specified stream.
+        /// As encoding will be used <see cref="DefaultEncoding"/>.
+        /// </summary>
+        /// <param name="stream">The stream used to write the binary data.</param>
+        /// <param name="value">The object to serialize.</param>
         public void Serialize(Stream stream, T value) => Serialize(stream, value, DefaultEncoding);
 
+        /// <summary>
+        /// Serializes specified object to binary data using specified encoding and returns the result.
+        /// </summary>
+        /// <param name="value">The object to serialize.</param>
+        /// <param name="encoding">The encoding for string serialization.</param>
+        /// <returns>The serialized object.</returns>
         public byte[] Serialize(T value, Encoding encoding)
         {
             using (MemoryStream stream = new MemoryStream())
@@ -350,6 +371,11 @@ namespace NullSoftware.Serialization
             }
         }
 
+        /// <summary>
+        /// Serializes specified object to binary data and returns the result.
+        /// </summary>
+        /// <param name="value">The object to serialize.</param>
+        /// <returns>The serialized object.</returns>
         public byte[] Serialize(T value) => Serialize(value, DefaultEncoding);
 
         public void SerializeUnsafe(Stream stream, T value, Encoding encoding)
