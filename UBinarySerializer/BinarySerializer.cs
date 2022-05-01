@@ -213,8 +213,10 @@ namespace NullSoftware.Serialization
 
                 if (memberType.IsAbstract || memberType.IsInterface || memberType == typeof(object))
                 {
-                    if (!Converters.ContainsKey(memberType))
-                        throw new InvalidOperationException($"Can not serialize abstract or interface types, like '{memberType}'.");
+                    if (Converters.ContainsKey(memberType))
+                        continue;
+
+                    throw new InvalidOperationException($"Can not serialize abstract or interface types, like '{memberType}'.");
                 }
 
                 try
