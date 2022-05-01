@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace NullSoftware.Serialization
@@ -86,6 +87,7 @@ namespace NullSoftware.Serialization
         /// </summary>
         /// <param name="obj">The object whose field/property value will be returned.</param>
         /// <returns>The field of property value of a specified object.</returns>
+        [DebuggerStepThrough]
         public object GetValue(object obj)
         {
             return _getMethod(obj);
@@ -96,6 +98,7 @@ namespace NullSoftware.Serialization
         /// </summary>
         /// <param name="obj">The object whose field/property value will be set.</param>
         /// <param name="value">The new field or property value.</param>
+        [DebuggerStepThrough]
         public void SetValue(object obj, object value)
         {
             _setMethod(obj, value);
@@ -118,24 +121,28 @@ namespace NullSoftware.Serialization
         #region Override Methods
 
         /// <inheritdoc/>
+        [DebuggerStepThrough]
         public override object[] GetCustomAttributes(bool inherit)
         {
             return MemberInfo.GetCustomAttributes(inherit);
         }
 
         /// <inheritdoc/>
+        [DebuggerStepThrough]
         public override object[] GetCustomAttributes(Type attributeType, bool inherit)
         {
             return MemberInfo.GetCustomAttributes(attributeType, inherit);
         }
 
         /// <inheritdoc/>
+        [DebuggerStepThrough]
         public override bool IsDefined(Type attributeType, bool inherit)
         {
             return MemberInfo.IsDefined(attributeType, inherit);
         }
 
         /// <inheritdoc/>
+        [DebuggerStepThrough]
         public override string ToString()
         {
             return MemberInfo.ToString();
