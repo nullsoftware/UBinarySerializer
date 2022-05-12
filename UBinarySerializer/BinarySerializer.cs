@@ -178,7 +178,7 @@ namespace NullSoftware.Serialization
                 // if there is no members with 'BinIndexAttribute'
                 // need to create indexes for all elements
                 int i = 0;
-                foreach (MemberInfoProxy member in bindingsTmp.Keys)
+                foreach (MemberInfoProxy member in bindingsTmp.Keys.ToArray())
                 {
                     bindingsTmp[member] = new BinIndexAttribute(i++);
                 }
