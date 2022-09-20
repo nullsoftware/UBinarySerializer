@@ -7,8 +7,12 @@ using System.Text;
 
 namespace NullSoftware.Serialization.Converters
 {
+    /// <summary>
+    /// Converter for <see cref="Encoding"/> values.
+    /// </summary>
     public class EncodingConverter : IBinaryConverter
     {
+        /// <inheritdoc/>
         public void ToBytes(MemberInfo member, BinaryWriter stream, object value, object parameter)
         {
             Encoding enc = (Encoding)value;
@@ -28,6 +32,7 @@ namespace NullSoftware.Serialization.Converters
             }
         }
 
+        /// <inheritdoc/>
         public object ToValue(MemberInfo member, BinaryReader stream, object parameter)
         {
             if (member.GetCustomAttribute<RequiredAttribute>() != null || parameter is null)

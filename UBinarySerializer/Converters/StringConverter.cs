@@ -6,8 +6,12 @@ using System.Text;
 
 namespace NullSoftware.Serialization.Converters
 {
+    /// <summary>
+    /// Converter for <see cref="String"/> values.
+    /// </summary>
     public class StringConverter : IBinaryConverter
     {
+        /// <inheritdoc/>
         public void ToBytes(MemberInfo member, BinaryWriter stream, object value, object parameter)
         {
             string str = (string)value;
@@ -27,6 +31,7 @@ namespace NullSoftware.Serialization.Converters
             }
         }
 
+        /// <inheritdoc/>
         public object ToValue(MemberInfo member, BinaryReader stream, object parameter)
         {
             if (member.GetCustomAttribute<RequiredAttribute>() != null || parameter is null)

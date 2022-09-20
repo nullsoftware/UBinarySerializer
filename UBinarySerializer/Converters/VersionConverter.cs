@@ -4,8 +4,12 @@ using System.Reflection;
 
 namespace NullSoftware.Serialization.Converters
 {
+    /// <summary>
+    /// Converter for <see cref="Version"/> values.
+    /// </summary>
     public class VersionConverter : IBinaryConverter
     {
+        /// <inheritdoc/>
         public void ToBytes(MemberInfo member, BinaryWriter stream, object value, object parameter)
         {
             Version version = (Version)value;
@@ -16,6 +20,7 @@ namespace NullSoftware.Serialization.Converters
             stream.Write(version.Build);
         }
 
+        /// <inheritdoc/>
         public object ToValue(MemberInfo member, BinaryReader stream, object parameter)
         {
             int major = stream.ReadInt32();

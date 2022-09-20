@@ -6,8 +6,12 @@ using System.Text;
 
 namespace NullSoftware.Serialization.Converters
 {
+    /// <summary>
+    /// Converter for <see cref="DateTimeOffset"/> values.
+    /// </summary>
     public class DateTimeOffsetConverter : IBinaryConverter
     {
+        /// <inheritdoc/>
         public void ToBytes(MemberInfo member, BinaryWriter stream, object value, object parameter)
         {
             DateTimeOffset offset = (DateTimeOffset)value;
@@ -16,6 +20,7 @@ namespace NullSoftware.Serialization.Converters
             stream.Write(offset.Offset.Ticks);
         }
 
+        /// <inheritdoc/>
         public object ToValue(MemberInfo member, BinaryReader stream, object parameter)
         {
             return new DateTimeOffset(stream.ReadInt64(), new TimeSpan(stream.ReadInt64()));

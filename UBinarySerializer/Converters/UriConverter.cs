@@ -7,8 +7,12 @@ using System.Text;
 
 namespace NullSoftware.Serialization.Converters
 {
+    /// <summary>
+    /// Converter for <see cref="Uri"/> values.
+    /// </summary>
     public class UriConverter : IBinaryConverter
     {
+        /// <inheritdoc/>
         public void ToBytes(MemberInfo member, BinaryWriter stream, object value, object parameter)
         {
             Uri uri = (Uri)value;
@@ -28,6 +32,7 @@ namespace NullSoftware.Serialization.Converters
             }
         }
 
+        /// <inheritdoc/>
         public object ToValue(MemberInfo member, BinaryReader stream, object parameter)
         {
             if (member.GetCustomAttribute<RequiredAttribute>() != null || parameter is null)
