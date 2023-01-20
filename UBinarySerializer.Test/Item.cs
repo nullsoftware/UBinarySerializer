@@ -9,18 +9,18 @@ namespace NullSoftware.Serialization.Test
     public struct Item : IEquatable<Item>
     {
         [BinIndex(0)]
-        public FourCharacterCode Id { get; set; }
+        public FourCharCode Id { get; set; }
 
         [BinIndex(1)]
         public byte Amount { get; set; }
 
-        public Item(FourCharacterCode id)
+        public Item(FourCharCode id)
         {
             Id = id;
             Amount = 1;
         }
 
-        public Item(FourCharacterCode id, byte amount)
+        public Item(FourCharCode id, byte amount)
         {
             Id = id;
             Amount = amount;

@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace NullSoftware.Serialization.Test
 {
-    public class FourCharacterCodeConverter : IBinaryConverter
+    public class FourCharCodeConverter : IBinaryConverter
     {
         public void ToBytes(MemberInfo member, BinaryWriter stream, object value, object parameter)
         {
-            stream.Write(((FourCharacterCode)value).Value);
+            stream.Write(((FourCharCode)value).Value);
         }
 
         public object ToValue(MemberInfo member, BinaryReader stream, object parameter)
         {
-            return new FourCharacterCode(stream.ReadBytes(4));
+            return new FourCharCode(stream.ReadBytes(4));
         }
     }
 }

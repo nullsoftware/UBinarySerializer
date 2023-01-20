@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace NullSoftware.Serialization.Test
 {
-    [BinaryConverter(typeof(FourCharacterCodeConverter))]
-    public struct FourCharacterCode : IEquatable<FourCharacterCode>
+    [BinaryConverter(typeof(FourCharCodeConverter))]
+    public struct FourCharCode : IEquatable<FourCharCode>
     {
         public byte[] Value { get; }
 
-        public FourCharacterCode(params byte[] value)
+        public FourCharCode(params byte[] value)
         {
             if (value == null) throw new ArgumentNullException();
             if (value.Length != 4) throw new ArgumentOutOfRangeException();
@@ -20,7 +20,7 @@ namespace NullSoftware.Serialization.Test
             Value = value;
         }
 
-        public FourCharacterCode(string value)
+        public FourCharCode(string value)
         {
             if (value == null) throw new ArgumentNullException();
             if (value.Length != 4) throw new ArgumentOutOfRangeException();
@@ -33,14 +33,14 @@ namespace NullSoftware.Serialization.Test
             return Encoding.ASCII.GetString(Value);
         }
 
-        public bool Equals(FourCharacterCode other)
+        public bool Equals(FourCharCode other)
         {
             return Value.SequenceEqual(other.Value);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is FourCharacterCode fourCC)
+            if (obj is FourCharCode fourCC)
                 return Equals(fourCC);
             else
                 return false;
@@ -51,12 +51,12 @@ namespace NullSoftware.Serialization.Test
             return BitConverter.ToInt32(Value);
         }
 
-        public static bool operator ==(FourCharacterCode left, FourCharacterCode right)
+        public static bool operator ==(FourCharCode left, FourCharCode right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(FourCharacterCode left, FourCharacterCode right)
+        public static bool operator !=(FourCharCode left, FourCharCode right)
         {
             return !left.Equals(right);
         }
