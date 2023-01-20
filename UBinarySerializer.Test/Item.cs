@@ -9,18 +9,18 @@ namespace NullSoftware.Serialization.Test
     public struct Item : IEquatable<Item>
     {
         [BinIndex(0)]
-        public int Id { get; set; }
+        public FourCC Id { get; set; }
 
         [BinIndex(1)]
         public byte Amount { get; set; }
 
-        public Item(int id)
+        public Item(FourCC id)
         {
             Id = id;
             Amount = 1;
         }
 
-        public Item(int id, byte amount)
+        public Item(FourCC id, byte amount)
         {
             Id = id;
             Amount = amount;
@@ -28,7 +28,7 @@ namespace NullSoftware.Serialization.Test
 
         public override int GetHashCode()
         {
-            return Id ^ Amount;
+            return Id.GetHashCode() ^ Amount;
         }
 
         public bool Equals(Item other)

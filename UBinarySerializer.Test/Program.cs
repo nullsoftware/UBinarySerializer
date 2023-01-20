@@ -12,7 +12,8 @@ namespace NullSoftware.Serialization.Test
             string outputPath = Path.GetFullPath(@".\output.bin");
             string outputUnsafePath = Path.GetFullPath(@".\output-unsafe.bin");
 
-            BinarySerializer<Player> serializer = RunAction(() => new BinarySerializer<Player>(), "Initialization");
+            BinarySerializer<Player> serializer = RunAction(() => new BinarySerializer<Player>(), "BinarySerializer Initialization");
+            BinaryUnsafeSerializer<Player> unsafeSerializer = RunAction(() => new BinaryUnsafeSerializer<Player>(), "BinaryUnsafeSerializer Initialization");
 
             // test data
             Player p = new Player();
@@ -21,8 +22,13 @@ namespace NullSoftware.Serialization.Test
             p.Position = new Vector3(253.4f, -3123.453f, 93.003f);
             p.GameMode = GameMode.Spectator;
             p.Skin = new Texture(@".\data\skin\default.png");
-            p.Items.Add(new Item(6345));
-            p.Items.Add(new Item(7734, 64));
+            p.Items.Add(new Item(new FourCC("SWRD")));
+            p.Items.Add(new Item(new FourCC("APLE"), 64));
+
+            for (byte i = 1; i <= 100; i++)
+            {
+                p.Items.Add(new Item(new FourCC("ITEM"), i));
+            }
 
             using (FileStream fs = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
@@ -31,7 +37,7 @@ namespace NullSoftware.Serialization.Test
 
             using (FileStream fs = new FileStream(outputUnsafePath, FileMode.OpenOrCreate, FileAccess.Write))
             {
-                RunAction(() => serializer.SerializeUnsafe(fs, p), "Serialize (Unsafe)");
+                RunAction(() => unsafeSerializer.Serialize(fs, p), "Serialize (Unsafe)");
             }
 
             bool isDesDataEqual, isUnsafeDesDataEqual;
@@ -45,7 +51,7 @@ namespace NullSoftware.Serialization.Test
 
             using (FileStream fs = new FileStream(outputUnsafePath, FileMode.Open, FileAccess.Read))
             {
-                Player pDeserialized = RunAction(() => serializer.DeserializeUnsafe(fs), "Deserialize (Unsafe)");
+                Player pDeserialized = RunAction(() => unsafeSerializer.Deserialize(fs), "Deserialize (Unsafe)");
 
                 isUnsafeDesDataEqual = p.Equals(pDeserialized);               
             }
@@ -57,11 +63,11 @@ namespace NullSoftware.Serialization.Test
 
             Console.WriteLine();
             Console.WriteLine("Serialized Data:");
-            Console.WriteLine(string.Join(" ", File.ReadAllBytes(outputPath).Select(b => b.ToString("X2"))));
+            Console.WriteLine(Trim(string.Join(" ", File.ReadAllBytes(outputPath).Select(b => b.ToString("X2")))));
 
             Console.WriteLine();
             Console.WriteLine("Serialized Data (Unsafe):");
-            Console.WriteLine(string.Join(" ", File.ReadAllBytes(outputUnsafePath).Select(b => b.ToString("X2"))));
+            Console.WriteLine(Trim(string.Join(" ", File.ReadAllBytes(outputUnsafePath).Select(b => b.ToString("X2")))));
 
             Console.WriteLine();
 
@@ -94,6 +100,18 @@ namespace NullSoftware.Serialization.Test
             Console.WriteLine($"'{actionName}' took {stopwatch.Elapsed}");
 
             return result;
+        }
+
+        static string Trim(string str, int maxLength = 255)
+        {
+            if (str.Length <= maxLength)
+            { 
+                return str;
+            }
+            else
+            {
+                return str.Substring(0, maxLength - 3) + "...";
+            }
         }
     }
 }
