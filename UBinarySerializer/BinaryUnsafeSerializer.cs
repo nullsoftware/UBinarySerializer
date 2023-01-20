@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections;
+﻿using NullSoftware.Serialization.Converters;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
-using System.Threading.Tasks;
-using NullSoftware.Serialization.Converters;
 
 namespace NullSoftware.Serialization
 {
     /// <summary>
-    /// Base class for binary serializer.
+    /// Base class for unsafe binary serializer.
     /// </summary>
-    public abstract class BinarySerializer
+    public abstract class BinaryUnsafeSerializer
     {
-        internal abstract ushort LatestGeneration { get; } // latest generation of target type
-
         /// <summary>
         /// Gets converters collection that used in current serializer.
         /// </summary>
@@ -28,11 +25,7 @@ namespace NullSoftware.Serialization
         /// <summary>
         /// Initializes default properties.
         /// </summary>
-        /// <param name="converters">
-        /// Instance of converters dictionary. 
-        /// If argument is null will be used <see cref="InitializeDefaultConverters"/> method.
-        /// </param>
-        protected BinarySerializer(IDictionary<Type, IBinaryConverter> converters)
+        protected BinaryUnsafeSerializer(IDictionary<Type, IBinaryConverter> converters)
         {
             Converters = converters;
         }
@@ -65,7 +58,6 @@ namespace NullSoftware.Serialization
         /// <returns>The deserialized object.</returns>
         public abstract object DeserializeObject(byte[] data);
 
-
         /// <summary>
         /// Initializes default converters for current serializer.
         /// Must contain all primitive type converters.
@@ -88,71 +80,42 @@ namespace NullSoftware.Serialization
                 [typeof(Double)] = new DoubleConverter(),
                 [typeof(Decimal)] = new DecimalConverter(),
                 [typeof(Char)] = new CharConverter(),
-                [typeof(String)] = new StringConverter(),
+                [typeof(String)] = new StringUnsafeConverter(),
                 [typeof(DateTime)] = new DateTimeConverter(),
                 [typeof(TimeSpan)] = new TimeSpanConverter(),
                 [typeof(DateTimeOffset)] = new DateTimeOffsetConverter(),
                 [typeof(Guid)] = new GuidConverter(),
                 [typeof(Version)] = new VersionConverter(),
-                [typeof(Uri)] = new UriConverter(),
+                [typeof(Uri)] = new UriUnsafeConverter(),
             };
         }
 
-        internal abstract void ContinueSerialization(BinaryWriter stream, object value, bool allowNullValue, ushort generation); // safe serialization
-        internal abstract object ContinueDeserialization(BinaryReader stream, bool allowNullValue, ushort generation); // safe deserialization
+        internal abstract void ContinueSerialization(BinaryWriter stream, object value); // unsafe serialization
+
+        internal abstract object ContinueDeserialization(BinaryReader stream); // unsafe deserialization
     }
 
     /// <summary>
     /// Serializes and deserializes an object, or an entire graph of connected objects, in binary format.
-    /// It uses safe method for serialization and supports backward compatibility for serialized objects.
+    /// It uses unsafe method for serialization.
     /// </summary>
     /// <typeparam name="T">Type of object to serialize/deserialize.</typeparam>
-    public class BinarySerializer<T> : BinarySerializer where T : new()
+    public class BinaryUnsafeSerializer<T> : BinaryUnsafeSerializer where T : new()
     {
         private readonly Dictionary<MemberInfoProxy, BinIndexAttribute> _bindings;
 
         /// <summary>
         /// Gets or sets default encoding for current instance of serializer.
         /// </summary>
-        public Encoding DefaultEncoding { get; set; } = Encoding.UTF8;
+        public Encoding DefaultEncoding { get; set; } = Encoding.ASCII;
 
-        /// <summary>
-        /// Gets a latest generation of field or property
-        /// from current and child serializers using <see cref="BinIndexAttribute"/>.
-        /// </summary>
-        internal override ushort LatestGeneration { get; }
 
-        /// <summary>
-        /// Gets a value indicating whether the current 
-        /// serialization target is reference type.
-        /// </summary>
-        private bool IsClass { get; }
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BinarySerializer{T}"/>
-        /// with specified converters.
-        /// </summary>
-        /// <param name="converters">Main converters dictionary, which must contains serializer converters.</param>
-        protected BinarySerializer(IDictionary<Type, IBinaryConverter> converters) : base(converters)
+        protected BinaryUnsafeSerializer(IDictionary<Type, IBinaryConverter> converters) : base(converters)
         {
             Type targetType = typeof(T);
 
             if (targetType.IsPrimitive || targetType.IsEnum || targetType.IsArray)
                 throw new ArgumentException("Can not create serializer for current type.");
-
-            //if (customConverters != null)
-            //{
-            //    // merge custom converters with main converters
-            //    foreach (var pair in customConverters)
-            //    {
-            //        if (Converters.ContainsKey(pair.Key))
-            //            Converters[pair.Key] = pair.Value;
-            //        else
-            //            Converters.Add(pair.Key, pair.Value);
-            //    }
-            //}
 
             Dictionary<MemberInfoProxy, BinIndexAttribute> bindingsTmp = new Dictionary<MemberInfoProxy, BinIndexAttribute>();
 
@@ -210,11 +173,8 @@ namespace NullSoftware.Serialization
                 }
             }
 
-            if (bindingsTmp.Any() == false)
-                throw new InvalidOperationException($"No members in '{targetType}' to serialize.");
-
             _bindings = bindingsTmp.OrderBy(t => t.Value.Index).ToDictionary(t => t.Key, t => t.Value);
-            List<BinarySerializer> serializersTmp = new List<BinarySerializer>();
+            List<BinaryUnsafeSerializer> serializersTmp = new List<BinaryUnsafeSerializer>();
 
             foreach (MemberInfoProxy member in _bindings.Keys)
             {
@@ -269,11 +229,7 @@ namespace NullSoftware.Serialization
 
                             if (Converters.ContainsKey(nullableInnerType))
                             {
-                                IBinaryConverter converter = (IBinaryConverter)Activator.CreateInstance(
-                                    typeof(NullableConverter<>).MakeGenericType(nullableInnerType),
-                                    Converters[nullableInnerType]);
-
-                                Converters.Add(memberType, converter);
+                                Converters.Add(memberType, Converters[nullableInnerType]);
 
                                 continue;
                             }
@@ -290,33 +246,29 @@ namespace NullSoftware.Serialization
                         IBinaryConverter converter;
 
                         if (memberType.GetCustomAttribute(typeof(BinaryConverterAttribute)) is BinaryConverterAttribute customConverterAtt &&
-                            (customConverterAtt.SerializerType is null || customConverterAtt.SerializerType == typeof(BinarySerializer)))
+                            (customConverterAtt.SerializerType is null || customConverterAtt.SerializerType == typeof(BinaryUnsafeSerializer)))
                         {
                             converter = (IBinaryConverter)Activator.CreateInstance(
                                 customConverterAtt.ConverterType);
                         }
                         else
                         {
-                            BinarySerializer serializer = (BinarySerializer)Activator.CreateInstance(
-                                typeof(BinarySerializer<>).MakeGenericType(memberType),
+                            BinaryUnsafeSerializer serializer = (BinaryUnsafeSerializer)Activator.CreateInstance(
+                                typeof(BinaryUnsafeSerializer<>).MakeGenericType(memberType),
                                 BindingFlags.Instance | BindingFlags.NonPublic,
                                 null,
                                 new object[] { Converters },
                                 null);
 
                             serializersTmp.Add(serializer);
-                            converter = new BinarySerializerConverter(serializer);
+                            converter = new BinaryUnsafeSerializerConverter(serializer);
                         }
 
                         Converters.Add(memberType, converter);
 
                         if (nullableType != null)
                         {
-                            converter = (IBinaryConverter)Activator.CreateInstance(
-                                typeof(NullableConverter<>).MakeGenericType(memberType),
-                                Converters[memberType]);
-
-                            Converters.Add(nullableType, converter);
+                            Converters.Add(nullableType, Converters[memberType]);
                         }
                     }
                 }
@@ -328,9 +280,9 @@ namespace NullSoftware.Serialization
                         foreach (Type t in enumerableTypes.Reverse<Type>())
                         {
                             if (t.IsArray)
-                                currentConverter = new ArrayConverter(t.GetElementType(), currentConverter);
+                                currentConverter = new ArrayUnsafeConverter(t.GetElementType(), currentConverter);
                             else if (ReflectionOperations.CheckIfListType(t))
-                                currentConverter = new ListConverter(t, currentConverter);
+                                currentConverter = new ListUnsafeConverter(t, currentConverter);
 
                             if (!Converters.ContainsKey(t))
                                 Converters.Add(t, currentConverter);
@@ -338,22 +290,12 @@ namespace NullSoftware.Serialization
                     }
                 }
             }
-
-            LatestGeneration = GetLatestGeneration(serializersTmp);
-            IsClass = targetType.IsClass;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BinarySerializer{T}"/> class.
-        /// </summary>
-        public BinarySerializer() : this(InitializeDefaultConverters())
+        public BinaryUnsafeSerializer() : this(InitializeDefaultConverters())
         {
 
         }
-
-        #endregion
-
-        #region Serialize & Deserialize Public Methods
 
         #region Serialize
 
@@ -365,59 +307,31 @@ namespace NullSoftware.Serialization
         /// <param name="encoding">The encoding for string serialization.</param>
         public void Serialize(Stream stream, T value, Encoding encoding)
         {
-            if (stream is null)
-                throw new ArgumentNullException(nameof(stream));
-
-            if (value is null)
-                throw new ArgumentNullException(nameof(value));
-
             using (BinaryWriter writer = new BinaryWriter(stream, encoding, true))
             {
-                ushort latestGen = LatestGeneration;
-                Converters[typeof(ushort)].ToBytes(null, writer, latestGen, null); // info about serializable object generation
-
-                ContinueSerialization(writer, value, false, latestGen);
+                ContinueSerialization(writer, value);
             }
         }
 
-        /// <summary>
-        /// Serializes specified object to binary data using specified stream.
-        /// As encoding will be used <see cref="DefaultEncoding"/>.
-        /// </summary>
-        /// <param name="stream">The stream to write the binary data.</param>
-        /// <param name="value">The object to serialize.</param>
         public void Serialize(Stream stream, T value) => Serialize(stream, value, DefaultEncoding);
 
-        /// <summary>
-        /// Serializes specified object to binary data using specified encoding and returns the result.
-        /// </summary>
-        /// <param name="value">The object to serialize.</param>
-        /// <param name="encoding">The encoding for string serialization.</param>
-        /// <returns>The serialized object.</returns>
         public byte[] Serialize(T value, Encoding encoding)
         {
             using (MemoryStream stream = new MemoryStream())
             {
                 Serialize(stream, value, encoding);
 
-                return stream.ToArray();
+                return stream.GetBuffer();
             }
         }
 
-        /// <summary>
-        /// Serializes specified object to binary data and returns the result.
-        /// </summary>
-        /// <param name="value">The object to serialize.</param>
-        /// <returns>The serialized object.</returns>
         public byte[] Serialize(T value) => Serialize(value, DefaultEncoding);
 
-        /// <inheritdoc/>
         public override void SerializeObject(Stream stream, object data)
         {
             Serialize(stream, (T)data);
         }
 
-        /// <inheritdoc/>
         public override byte[] SerializeObject(object data)
         {
             return Serialize((T)data);
@@ -427,63 +341,31 @@ namespace NullSoftware.Serialization
 
         #region Deserialize
 
-        /// <summary>
-        /// Deserializes object from binary data using specified stream and encoding.
-        /// </summary>
-        /// <param name="stream">The stream to read the binary data.</param>
-        /// <param name="encoding">The encoding for string deserialization.</param>
-        /// <returns>The deserialized object.</returns>
         public T Deserialize(Stream stream, Encoding encoding)
         {
-            if (stream is null)
-                throw new ArgumentNullException(nameof(stream));
-
             using (BinaryReader reader = new BinaryReader(stream, encoding, true))
             {
-                ushort serializedGen = (ushort)Converters[typeof(ushort)].ToValue(null, reader, null);
-
-                if (serializedGen > LatestGeneration)
-                    throw new NotSupportedException("The current object generation is lower then in serialized data.");
-
-                return (T)ContinueDeserialization(reader, false, serializedGen);
+                return (T)ContinueDeserialization(reader);
             }
         }
 
-        /// <summary>
-        /// Deserializes object from binary data using specified stream.
-        /// </summary>
-        /// <param name="stream">The stream to read the binary data.</param>
-        /// <returns>The deserialized object.</returns>
         public T Deserialize(Stream stream) => Deserialize(stream, DefaultEncoding);
 
-        /// <summary>
-        /// Deserializes object from binary data using specified byte array and encoding.
-        /// </summary>
-        /// <param name="data">The byte array to deserialize data.</param>
-        /// <param name="encoding">The encoding for string deserialization.</param>
-        /// <returns>The deserialized object.</returns>
-        public T Deserialize(byte[] data, Encoding encoding)
+        public T Deserialize(byte[] buffer, Encoding encoding)
         {
-            using (MemoryStream stream = new MemoryStream(data, false))
+            using (MemoryStream stream = new MemoryStream(buffer, false))
             {
                 return Deserialize(stream, encoding);
             }
         }
 
-        /// <summary>
-        /// Deserializes object from binary data using specified byte array.
-        /// </summary>
-        /// <param name="data">The byte array to deserialize data.</param>
-        /// <returns>The deserialized object.</returns>
-        public T Deserialize(byte[] data) => Deserialize(data, DefaultEncoding);
+        public T Deserialize(byte[] buffer) => Deserialize(buffer, DefaultEncoding);
 
-        /// <inheritdoc/>
         public override object DeserializeObject(Stream stream)
         {
             return Deserialize(stream);
         }
 
-        /// <inheritdoc/>
         public override object DeserializeObject(byte[] data)
         {
             return Deserialize(data);
@@ -491,54 +373,26 @@ namespace NullSoftware.Serialization
 
         #endregion
 
-        #endregion
+        #region Internal
 
-        internal override void ContinueSerialization(BinaryWriter stream, object value, bool allowNullValue, ushort generation)
+        internal override void ContinueSerialization(BinaryWriter stream, object value)
         {
-            if (IsClass)
+            foreach (MemberInfoProxy member in _bindings.Select(t => t.Key))
             {
-                if (allowNullValue)
-                {
-                    stream.Write(value != null);
-
-                    if (value is null)
-                        return;
-                }
-                else if (value is null)
-                {
-                    throw new ArgumentNullException(
-                        nameof(value), $"Null value not supported for {typeof(T).FullName} member.");
-                }
-            }
-
-            foreach (MemberInfoProxy member in _bindings.Where(t => t.Value.Generation <= generation).Select(t => t.Key))
-            {
-                SerializeMember(member, stream, ref value, generation);
+                SerializeMember(member, stream, ref value, null);
             }
         }
 
-        internal override object ContinueDeserialization(BinaryReader stream, bool allowNullValue, ushort generation)
+        internal override object ContinueDeserialization(BinaryReader stream)
         {
-            if (allowNullValue && IsClass && stream.ReadBoolean() == false)
-                return null;
-
             object result = new T();
 
-            foreach (MemberInfoProxy member in _bindings.Where(t => t.Value.Generation <= generation).Select(t => t.Key))
+            foreach (MemberInfoProxy member in _bindings.Select(t => t.Key))
             {
-                DeserializeMember(member, stream, ref result, generation);
+                DeserializeMember(member, stream, ref result, null);
             }
 
             return result;
-        }
-
-        private ushort GetLatestGeneration(IList<BinarySerializer> serializers)
-        {
-            return serializers
-                .Select(t => t.LatestGeneration)
-                .Concat(_bindings.Values.Select(t => t.Generation))
-                .OrderBy(t => t)
-                .Last();
         }
 
         private void SerializeMember(MemberInfoProxy member, BinaryWriter stream, ref object obj, object parameter)
@@ -561,6 +415,8 @@ namespace NullSoftware.Serialization
                 stream,
                 parameter));
         }
+
+        #endregion
 
         /// <inheritdoc/>
         public override string ToString()
