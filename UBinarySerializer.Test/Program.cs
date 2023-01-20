@@ -22,12 +22,12 @@ namespace NullSoftware.Serialization.Test
             p.Position = new Vector3(253.4f, -3123.453f, 93.003f);
             p.GameMode = GameMode.Spectator;
             p.Skin = new Texture(@".\data\skin\default.png");
-            p.Items.Add(new Item(new FourCC("SWRD")));
-            p.Items.Add(new Item(new FourCC("APLE"), 64));
+            p.Items.Add(new Item(new FourCharacterCode("SWRD")));
+            p.Items.Add(new Item(new FourCharacterCode("APLE"), 64));
 
             for (byte i = 1; i <= 100; i++)
             {
-                p.Items.Add(new Item(new FourCC("ITEM"), i));
+                p.Items.Add(new Item(new FourCharacterCode("ITEM"), i));
             }
 
             using (FileStream fs = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
